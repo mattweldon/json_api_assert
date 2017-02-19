@@ -211,7 +211,7 @@ defmodule JsonApiAssert.SerializerTest do
       "id" => "1",
       "type" => "post",
       "attributes" => %{
-        "created-at" => "2016-01-01T00:00:00Z"
+        "created-at" => "2016-01-01T00:00:00"
       }
     }
 
@@ -244,6 +244,22 @@ defmodule JsonApiAssert.SerializerTest do
       "type" => "post",
       "attributes" => %{
         "created-at" => "2016-01-01"
+      }
+    }
+
+    assert actual == expected
+  end
+
+  test "serializaing Timex.DateTime values" do
+    actual =
+      %Post{id: 1, created_at: Timex.to_datetime({{2016, 1, 1}, {0, 0, 0}})}
+      |> serialize()
+
+    expected = %{
+      "id" => "1",
+      "type" => "post",
+      "attributes" => %{
+        "created-at" => "2016-01-01T00:00:00Z"
       }
     }
 

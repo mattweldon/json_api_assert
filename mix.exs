@@ -21,7 +21,7 @@ defmodule JsonApiAssert.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger]]
+    [applications: [:logger, :timex]]
   end
 
   defp elixirc_paths(:test), do: ["lib", "test/support"]
@@ -43,8 +43,10 @@ defmodule JsonApiAssert.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    [{:ecto, "~> 1.1.8", only: :test},
+    [{:ecto, "~> 2.0", only: :test},
      {:earmark, "~> 0.2.1", only: :dev},
-     {:ex_doc, "~> 0.11.5", only: :dev}]
+     {:ex_doc, "~> 0.11.5", only: :dev},
+     {:timex, "~> 3.0", only: :test},
+     {:timex_ecto, "~> 3.0", only: :test}]
   end
 end
