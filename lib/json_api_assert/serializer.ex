@@ -115,7 +115,7 @@ defmodule JsonApiAssert.Serializer do
 
   defp serialize_value(%{__struct__: DateTime} = value) do
     value
-    |> Timex.set(microsecond: {0, 0})
+    |> force_microseconds_precision
     |> DateTime.to_iso8601
   end
   defp serialize_value(%{__struct__: Ecto.DateTime} = value),
@@ -127,4 +127,15 @@ defmodule JsonApiAssert.Serializer do
   defp serialize_value(%{__struct__: NaiveDateTime} = value),
     do: apply(NaiveDateTime, :to_iso8601, [value])
   defp serialize_value(value), do: value
+
+
+  defp force_microseconds_precision(date) do
+    microseconds = date |> microseconds_as_number
+    date |> Timex.set(microsecond: {microseconds, 6})
+  end
+
+  defp microseconds_as_number(date) do
+    {microseconds, _} = date |> Timex.format!("%f", :strftime) |> Integer.parse
+    microseconds
+  end
 end
