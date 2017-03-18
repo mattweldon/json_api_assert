@@ -114,10 +114,9 @@ defmodule JsonApiAssert.Serializer do
         |> String.replace("_", "-")
 
   defp serialize_value(%{__struct__: DateTime} = value) do
-    {:ok, date} =
-      value
-      |> Timex.format("{ISO:Extended:Z}")
-    date
+    value
+    |> Timex.set(microsecond: {0, 0})
+    |> DateTime.to_iso8601
   end
   defp serialize_value(%{__struct__: Ecto.DateTime} = value),
     do: apply(Ecto.DateTime, :to_iso8601, [value])
