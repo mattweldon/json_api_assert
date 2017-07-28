@@ -118,15 +118,25 @@ defmodule JsonApiAssert.Serializer do
     |> force_microseconds_precision
     |> DateTime.to_iso8601
   end
-  defp serialize_value(%{__struct__: Ecto.DateTime} = value),
-    do: apply(Ecto.DateTime, :to_iso8601, [value])
-  defp serialize_value(%{__struct__: Ecto.Time} = value),
-    do: apply(Ecto.Time, :to_iso8601, [value])
-  defp serialize_value(%{__struct__: Ecto.Date} = value),
-    do: apply(Ecto.Date, :to_iso8601, [value])
-  defp serialize_value(%{__struct__: NaiveDateTime} = value),
-    do: apply(NaiveDateTime, :to_iso8601, [value])
-  defp serialize_value(value), do: value
+  defp serialize_value(%{__struct__: Ecto.DateTime} = value) do
+    apply(Ecto.DateTime, :to_iso8601, [value])
+  end
+  defp serialize_value(%{__struct__: Ecto.Time} = value) do
+    apply(Ecto.Time, :to_iso8601, [value])
+  end
+  defp serialize_value(%{__struct__: Ecto.Date} = value) do
+    apply(Ecto.Date, :to_iso8601, [value])
+  end
+  defp serialize_value(%{__struct__: NaiveDateTime} = value) do
+    apply(NaiveDateTime, :to_iso8601, [value])
+  end
+  defp serialize_value(%{__struct__: Date} = value) do
+    "#{value |> Date.to_iso8601}T00:00:00.000000Z"
+  end
+  defp serialize_value(value) do 
+    value
+  end
+
 
 
   defp force_microseconds_precision(date) do
@@ -135,7 +145,9 @@ defmodule JsonApiAssert.Serializer do
   end
 
   defp microseconds_as_number(date) do
-    {microseconds, _} = date |> Timex.format!("%f", :strftime) |> Integer.parse
-    microseconds
+    case date |> Timex.format!("%f", :strftime) |> Integer.parse do
+      {microseconds, _} -> microseconds
+      _ -> 0
+    end
   end
 end
